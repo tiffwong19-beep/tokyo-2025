@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>東京 2026 🎇 全員同步版 App</title>
+    <title>東京跨年 2026 🎇 Chiikawa App</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -14,7 +14,7 @@
         .blue-gradient { background: linear-gradient(135deg, #a5d8ff 0%, #74c0fc 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.3); }
         .map-box { width: 100%; height: 180px; border-radius: 20px; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; }
-        .modal-overlay { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 200; position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 200; }
         .active-tab-indicator { position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 4px; background: #339af0; border-radius: 10px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
@@ -23,7 +23,7 @@
     <div id="app" class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-slate-50">
         
         <header class="blue-gradient p-6 text-white text-center rounded-b-[40px] shadow-lg sticky top-0 z-50">
-            <h1 class="text-2xl chiikawa-font mb-2 text-shadow-sm">💙 東京跨年攻略 💙</h1>
+            <h1 class="text-2xl chiikawa-font mb-2">💙 東京跨年攻略 💙</h1>
             <div class="bg-white/20 py-2 px-4 rounded-2xl flex justify-between items-center text-xs">
                 <div class="flex items-center gap-2">
                     <i :class="weather.icon"></i>
@@ -38,29 +38,28 @@
             <div v-show="activeTab === 'schedule'" class="space-y-4">
                 <div class="flex overflow-x-auto gap-2 no-scrollbar py-1">
                     <button v-for="day in 8" :key="day" @click="currentDay = day"
-                        :class="['px-5 py-2 rounded-full text-xs font-bold transition-all shadow-sm', currentDay === day ? 'bg-blue-600 text-white' : 'bg-white text-blue-400']">
+                        :class="['px-5 py-2 rounded-full text-xs font-bold transition-all shadow-sm', currentDay === day ? 'bg-blue-600 text-white' : 'bg-white text-blue-400 border border-blue-50']">
                         D{{ day }}
                     </button>
                 </div>
                 <div class="map-box">
                     <iframe :src="'https://maps.google.com/maps?q=' + encodeURIComponent(currentDayMapQuery + ' Tokyo') + '&output=embed'" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-black text-slate-800 italic underline decoration-blue-200">D{{ currentDay }} 行程表</h2>
-                    <button @click="openModal('schedule')" class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-md">+ 新增</button>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-black text-slate-800 underline decoration-blue-200 decoration-4">D{{ currentDay }} 行程表</h2>
+                    <button @click="openModal('schedule')" class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(item, index) in scheduleData[currentDay]" :key="index" class="glass-card p-4 flex gap-4 items-center shadow-sm border-l-4 border-blue-400">
-                    <div class="text-2xl">{{ item.emoji || '📍' }}</div>
+                <div v-for="(item, index) in scheduleData[currentDay]" :key="index" class="glass-card p-4 flex justify-between items-center shadow-sm border-l-4 border-blue-400">
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">{{ item.time }}</span>
-                            <span class="text-[10px] text-slate-400">⏳ {{ item.stay }}</span>
                         </div>
                         <div class="font-bold text-slate-800 text-sm">{{ item.loc }}</div>
+                        <div class="text-[10px] text-slate-400 mt-1">停留: {{ item.stay }}</div>
                     </div>
-                    <div class="flex gap-4 text-slate-200">
-                        <button @click="openModal('schedule', index)" class="hover:text-blue-400"><i class="fas fa-edit"></i></button>
-                        <button @click="deleteCloudItem('schedule', index)" class="hover:text-red-400"><i class="fas fa-trash"></i></button>
+                    <div class="flex gap-4 text-slate-300">
+                        <button @click="openModal('schedule', index)"><i class="fas fa-edit"></i></button>
+                        <button @click="deleteItem('schedule', index)"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
             </div>
@@ -69,97 +68,106 @@
                 <div class="map-box">
                     <iframe src="https://www.google.com/maps?q=Tokyo+Restaurants&output=embed" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-black text-slate-800 italic">🍱 美食雷達</h2>
-                    <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold shadow-md">+ 新增</button>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-black text-slate-800">🍱 美食清單</h2>
+                    <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm">
-                    <div class="text-2xl">{{ f.emoji || '🍱' }}</div>
+                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border border-pink-50">
+                    <div class="text-2xl">{{ f.emoji }}</div>
                     <div class="flex-1">
                         <div class="font-bold text-slate-800 text-sm">{{ f.name }}</div>
                         <div class="text-[10px] text-pink-400 font-bold uppercase">{{ f.area }}</div>
                     </div>
-                    <div class="flex gap-4 text-slate-200">
-                        <button @click="openModal('food', index)" class="hover:text-blue-400"><i class="fas fa-edit"></i></button>
-                        <button @click="deleteCloudItem('food', index)" class="hover:text-red-400"><i class="fas fa-trash"></i></button>
+                    <div class="flex gap-4 text-slate-300">
+                        <button @click="openModal('food', index)"><i class="fas fa-edit"></i></button>
+                        <button @click="deleteItem('food', index)"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
             </div>
 
             <div v-show="activeTab === 'money'" class="space-y-4">
-                <div class="bg-slate-800 text-white p-6 rounded-[35px] shadow-xl text-center relative overflow-hidden">
-                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Spending</p>
-                    <h3 class="text-3xl font-black italic">¥ {{ totalExpense.toLocaleString() }}</h3>
-                    <div class="mt-4">
-                        <div class="flex justify-between text-[10px] mb-1 font-bold">
-                            <span>預算進度</span>
-                            <span>{{ budgetPercent }}% (目標: ¥{{ totalBudget.toLocaleString() }})</span>
-                        </div>
-                        <div class="w-full bg-slate-700 h-2 rounded-full">
-                            <div class="bg-blue-400 h-2 rounded-full transition-all duration-500" :style="{ width: budgetPercent + '%' }"></div>
+                <div class="bg-slate-800 text-white p-6 rounded-[35px] shadow-xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Budget Tracker</p>
+                        <h3 class="text-3xl font-black italic">¥ {{ totalExpense.toLocaleString() }}</h3>
+                        <div class="mt-4">
+                            <div class="flex justify-between text-[10px] mb-1 font-bold">
+                                <span>支出進度</span>
+                                <span>{{ budgetPercent }}% (目標: ¥{{ totalBudget.toLocaleString() }})</span>
+                            </div>
+                            <div class="w-full bg-slate-700 h-2 rounded-full">
+                                <div class="bg-blue-400 h-2 rounded-full transition-all duration-500" :style="{ width: budgetPercent + '%' }"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="glass-card p-4 space-y-3 shadow-lg">
                     <div class="grid grid-cols-2 gap-2">
                         <input v-model="newExpense.item" placeholder="項目" class="bg-slate-50 p-3 rounded-xl text-sm outline-none border border-slate-100">
-                        <input v-model.number="newExpense.amount" type="number" placeholder="金額 ¥" class="bg-slate-50 p-3 rounded-xl text-sm outline-none">
+                        <input v-model.number="newExpense.amount" type="number" placeholder="金額 ¥" class="bg-slate-50 p-3 rounded-xl text-sm outline-none border border-slate-100">
                     </div>
-                    <button @click="addExpense" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">確認記錄</button>
+                    <div class="flex gap-2">
+                        <button @click="setBudget" class="text-[10px] text-blue-400 font-bold px-2">修改總預算</button>
+                        <button @click="addExpense" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">確認記錄</button>
+                    </div>
                 </div>
+                
                 <div v-for="(e, index) in expenses" :key="index" class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-50">
                     <span class="text-sm font-bold text-slate-700">{{ e.item }}</span>
                     <div class="flex items-center gap-3">
                         <span class="text-red-500 font-black text-sm">¥{{ e.amount.toLocaleString() }}</span>
-                        <button @click="deletePersonalItem('money', index)" class="text-slate-200 hover:text-red-400"><i class="fas fa-times-circle text-lg"></i></button>
+                        <button @click="deleteItem('money', index)" class="text-slate-200 hover:text-red-400"><i class="fas fa-times-circle"></i></button>
                     </div>
                 </div>
             </div>
 
             <div v-show="activeTab === 'shop'" class="space-y-4">
                 <h2 class="text-xl font-black text-slate-800 italic underline decoration-yellow-200">Shopping Wishlist</h2>
-                <div v-for="(item, i) in shoppingList" :key="i" class="flex items-center gap-4 bg-white p-5 rounded-[25px] shadow-sm">
-                    <input type="checkbox" class="w-6 h-6 accent-blue-500">
-                    <span class="flex-1 text-slate-700 font-bold text-sm">{{ item }}</span>
-                    <button @click="deletePersonalItem('shop', i)" class="text-slate-200"><i class="fas fa-trash"></i></button>
+                <div class="space-y-3">
+                    <div v-for="(item, i) in shoppingList" :key="i" class="flex items-center gap-4 bg-white p-5 rounded-[25px] shadow-sm border border-slate-50">
+                        <input type="checkbox" class="w-6 h-6 rounded-full accent-blue-500">
+                        <span class="flex-1 text-slate-700 font-bold text-sm">{{ item }}</span>
+                        <div class="flex gap-4 text-slate-200">
+                            <button @click="editShopping(i)"><i class="fas fa-edit"></i></button>
+                            <button @click="deleteItem('shop', i)"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <button @click="addShopping" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-[25px] text-slate-400 font-bold">+ 新增清單項目</button>
                 </div>
-                <button @click="addPersonalShop" class="w-full py-4 border-2 border-dashed border-slate-200 rounded-[25px] text-slate-300 font-bold">+ 新增個人清單</button>
             </div>
+
         </main>
 
-        <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
-            <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl overflow-hidden animate-slide-up">
+        <div v-if="showModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-6">
+            <div class="bg-white w-full max-w-sm rounded-[35px] shadow-2xl overflow-hidden">
                 <div class="blue-gradient p-5 text-white text-center font-black italic">
-                    {{ isEditing ? 'EDIT DATA' : 'ADD NEW DATA' }}
+                    {{ isEditing ? 'EDIT ITEM' : 'ADD NEW' }}
                 </div>
                 <div class="p-6 space-y-4">
-                    <div class="grid grid-cols-4 gap-4 items-center">
-                        <label class="text-xs font-bold text-slate-400">圖標</label>
-                        <input v-model="form.emoji" placeholder="📍" class="col-span-3 border-b-2 py-2 text-center text-xl outline-none focus:border-blue-400">
+                    <div v-if="modalType === 'schedule'" class="space-y-3">
+                        <input v-model="form.time" type="time" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
+                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-xl outline-none focus:border-blue-400">
+                        <input v-model="form.loc" placeholder="地點名稱" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
+                        <input v-model="form.stay" placeholder="預計停留 (例如 1.5時)" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
                     </div>
-                    <div v-if="modalType === 'schedule'" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-2">
-                            <input v-model="form.time" type="time" class="border-b-2 py-2 text-sm outline-none focus:border-blue-400">
-                            <input v-model="form.stay" placeholder="停留: 1時" class="border-b-2 py-2 text-sm outline-none focus:border-blue-400">
-                        </div>
-                        <input v-model="form.loc" placeholder="地點名稱" class="w-full border-b-2 py-2 text-sm outline-none focus:border-blue-400">
+                    <div v-if="modalType === 'food'" class="space-y-3">
+                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-xl outline-none focus:border-blue-400">
+                        <input v-model="form.name" placeholder="餐廳名稱" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-pink-400 text-sm">
+                        <input v-model="form.area" placeholder="所在區域" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-pink-400 text-sm">
                     </div>
-                    <div v-if="modalType === 'food'" class="space-y-4">
-                        <input v-model="form.name" placeholder="餐廳名稱" class="w-full border-b-2 py-2 text-sm outline-none focus:border-pink-400">
-                        <input v-model="form.area" placeholder="區域" class="w-full border-b-2 py-2 text-sm outline-none focus:border-pink-400">
-                    </div>
-                    <div class="flex gap-3 pt-4">
+                    <div class="flex gap-3 pt-2">
                         <button @click="showModal = false" class="flex-1 py-3 bg-slate-50 text-slate-400 rounded-2xl font-bold">取消</button>
-                        <button @click="saveCloudData" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg">儲存並同步</button>
+                        <button @click="saveModal" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg">儲存變更</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md flex justify-around p-5 max-w-md mx-auto rounded-t-[40px] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-[100]">
-            <button v-for="t in tabs" @click="activeTab = t.id" :class="activeTab === t.id ? 'text-blue-600' : 'text-slate-300'" class="flex flex-col items-center gap-1.5 transition-all">
+            <button v-for="t in tabs" @click="activeTab = t.id" :class="activeTab === t.id ? 'text-blue-600 scale-110' : 'text-slate-300'" class="flex flex-col items-center gap-1.5 transition-all">
                 <i :class="[t.icon, 'text-xl']"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">{{ t.name }}</span>
+                <span class="text-[10px] font-black uppercase tracking-tighter">{{ t.name }}</span>
                 <div v-if="activeTab === t.id" class="active-tab-indicator"></div>
             </button>
         </nav>
@@ -176,47 +184,51 @@
                     modalType: '',
                     isEditing: false,
                     editIndex: null,
-                    form: { emoji: '📍', time: '', loc: '', stay: '', name: '', area: '' },
-                    // --- API 配置區 ---
-                    firebaseUrl: 'https://tokyo-trip-d76d6-default-rtdb.asia-southeast1.firebasedatabase.app/', 
-                    weatherApiKey: '073a929c92257a61fa1d973faca3b13e',
-                    // ----------------
-                    weather: { temp: '--', status: 'Loading', icon: 'fas fa-spinner fa-spin' },
+                    form: { time: '', loc: '', stay: '', name: '', area: '' },
+                    apiKey: 'YOUR_API_KEY', // <-- 請替換
+                    weather: { temp: '--', status: '更新中', icon: 'fas fa-spinner fa-spin' },
                     totalBudget: 150000,
-                    expenses: [],
-                    shoppingList: [],
-                    foodList: [],
-                    scheduleData: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[] },
                     tabs: [
                         { id: 'schedule', name: '行程', icon: 'fas fa-map-marked-alt' },
                         { id: 'food', name: '美食', icon: 'fas fa-utensils' },
                         { id: 'money', name: '記帳', icon: 'fas fa-wallet' },
                         { id: 'shop', name: '購物', icon: 'fas fa-shopping-bag' }
                     ],
-                    newExpense: { item: '', amount: null }
+                    newExpense: { item: '', amount: null },
+                    expenses: [{ item: '飯店訂金', amount: 15000 }],
+                    shoppingList: ['Chiikawa 限量玩偶', '松本清藥妝', 'Alpen Tokyo 限定跑鞋', '晴空塔限定小八貓'],
+                    foodList: [
+                        { name: "Asakusa Unana 鰻魚飯糰", area: "淺草", emoji: "🍙" },
+                        { name: "五代目 花山烏冬", area: "銀座", emoji: "🍜" },
+                        { name: "銀座 篝 本店", area: "銀座", emoji: "🍲" }
+                    ],
+                    scheduleData: {
+                        1: [{ time: "09:49", loc: "淺草寺 雷門", stay: "30分" }, { time: "13:03", loc: "東京晴空塔", stay: "1時" }],
+                        2: [{ time: "09:20", loc: "東京站丸之內", stay: "9時" }, { time: "20:14", loc: "東京鐵塔", stay: "1時" }],
+                        3: [{ time: "13:46", loc: "teamLab Planets", stay: "2時" }, { time: "16:07", loc: "鋼彈基地", stay: "30分" }],
+                        4: [{ time: "10:22", loc: "明治神宮", stay: "45分" }, { time: "15:18", loc: "澀谷 SKY", stay: "2時" }],
+                        5: [{ time: "08:00", loc: "東京迪士尼海洋", stay: "全天" }],
+                        6: [{ time: "09:23", loc: "江之島", stay: "3小時" }],
+                        7: [{ time: "10:05", loc: "Chiikawa Park", stay: "3時" }],
+                        8: [{ time: "09:25", loc: "銀座 篝 本店", stay: "1時" }]
+                    }
                 }
             },
             computed: {
                 totalExpense() { return this.expenses.reduce((sum, item) => sum + item.amount, 0); },
-                budgetPercent() { return Math.min(Math.round((this.totalExpense / this.totalBudget) * 100), 100); },
+                budgetPercent() { 
+                    let p = Math.round((this.totalExpense / this.totalBudget) * 100);
+                    return p > 100 ? 100 : p;
+                },
                 currentDayMapQuery() { return (this.scheduleData[this.currentDay] || []).map(p => p.loc).join(' '); }
             },
             methods: {
-                async syncFromCloud() {
+                async fetchWeather() {
                     try {
-                        const res = await fetch(this.firebaseUrl);
+                        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Tokyo&units=metric&appid=${this.apiKey}&lang=zh_tw`);
                         const data = await res.json();
-                        if (data) {
-                            this.scheduleData = data.scheduleData || this.scheduleData;
-                            this.foodList = data.foodList || [];
-                        }
-                    } catch (e) { console.error("Cloud Error"); }
-                },
-                async saveToCloud() {
-                    await fetch(this.firebaseUrl, {
-                        method: 'PUT',
-                        body: JSON.stringify({ scheduleData: this.scheduleData, foodList: this.foodList })
-                    });
+                        this.weather = { temp: Math.round(data.main.temp), status: data.weather[0].description, icon: 'fas fa-cloud-sun' };
+                    } catch (e) { this.weather.status = "天氣獲取失敗"; }
                 },
                 openModal(type, index = null) {
                     this.modalType = type;
@@ -226,62 +238,67 @@
                         this.form = { ...(type === 'schedule' ? this.scheduleData[this.currentDay][index] : this.foodList[index]) };
                     } else {
                         this.isEditing = false;
-                        this.form = { emoji: type==='schedule'?'📍':'🍱', time: '09:00', loc: '', stay: '1時', name: '', area: '' };
+                        this.form = { time: '09:00', loc: '', stay: '1時', name: '', area: '' };
                     }
                 },
-                async saveCloudData() {
+                saveModal() {
                     if (this.modalType === 'schedule') {
                         if (this.isEditing) this.scheduleData[this.currentDay][this.editIndex] = { ...this.form };
                         else this.scheduleData[this.currentDay].push({ ...this.form });
                         this.scheduleData[this.currentDay].sort((a, b) => a.time.localeCompare(b.time));
-                    } else {
-                        if (this.isEditing) this.foodList[this.editIndex] = { ...this.form };
-                        else this.foodList.push({ ...this.form });
+                    } else if (this.modalType === 'food') {
+                        if (this.isEditing) this.foodList[this.editIndex] = { ...this.form, emoji: "🍴" };
+                        else this.foodList.push({ ...this.form, emoji: "🍴" });
                     }
-                    await this.saveToCloud();
-                    this.showModal = false; // <-- 成功後自動關閉彈窗
+                    this.saveData(); this.showModal = false;
                 },
-                async deleteCloudItem(type, index) {
-                    if (!confirm("確定要刪除雲端項目？這會同步給所有人！")) return;
-                    if (type === 'schedule') this.scheduleData[this.currentDay].splice(index, 1);
-                    else this.foodList.splice(index, 1);
-                    await this.saveToCloud();
+                deleteItem(type, index) {
+                    if (confirm("確定刪除嗎？")) {
+                        if (type === 'schedule') this.scheduleData[this.currentDay].splice(index, 1);
+                        else if (type === 'food') this.foodList.splice(index, 1);
+                        else if (type === 'money') this.expenses.splice(index, 1);
+                        else if (type === 'shop') this.shoppingList.splice(index, 1);
+                        this.saveData();
+                    }
                 },
                 addExpense() {
                     if (this.newExpense.item && this.newExpense.amount) {
                         this.expenses.unshift({ ...this.newExpense });
                         this.newExpense = { item: '', amount: null };
-                        this.savePersonal();
+                        this.saveData();
                     }
                 },
-                addPersonalShop() {
-                    const val = prompt("新增個人購物清單:");
-                    if (val) { this.shoppingList.push(val); this.savePersonal(); }
+                setBudget() {
+                    const b = prompt("設定旅遊總預算 (JPY):", this.totalBudget);
+                    if (b) { this.totalBudget = parseInt(b); this.saveData(); }
                 },
-                deletePersonalItem(type, index) {
-                    if (type === 'shop') this.shoppingList.splice(index, 1);
-                    else this.expenses.splice(index, 1);
-                    this.savePersonal();
+                addShopping() {
+                    const val = prompt("新增購物清單:");
+                    if (val) { this.shoppingList.push(val); this.saveData(); }
                 },
-                savePersonal() {
-                    localStorage.setItem('personal_tokyo_v2', JSON.stringify({ expenses: this.expenses, shoppingList: this.shoppingList }));
+                editShopping(index) {
+                    const val = prompt("修改清單:", this.shoppingList[index]);
+                    if (val) { this.shoppingList[index] = val; this.saveData(); }
                 },
-                async fetchWeather() {
-                    try {
-                        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Tokyo&units=metric&appid=${this.weatherApiKey}&lang=zh_tw`);
-                        const d = await res.json();
-                        this.weather = { temp: Math.round(d.main.temp), status: d.weather[0].description, icon: 'fas fa-cloud-sun' };
-                    } catch (e) { this.weather.status = "API 錯誤"; }
+                saveData() {
+                    localStorage.setItem('tokyo_2026_final', JSON.stringify({
+                        expenses: this.expenses, shoppingList: this.shoppingList,
+                        foodList: this.foodList, scheduleData: this.scheduleData, budget: this.totalBudget
+                    }));
+                },
+                loadData() {
+                    const saved = localStorage.getItem('tokyo_2026_final');
+                    if (saved) {
+                        const d = JSON.parse(saved);
+                        this.expenses = d.expenses || [];
+                        this.shoppingList = d.shoppingList || [];
+                        this.foodList = d.foodList || [];
+                        this.scheduleData = d.scheduleData || this.scheduleData;
+                        this.totalBudget = d.budget || 150000;
+                    }
                 }
             },
-            mounted() {
-                const p = JSON.parse(localStorage.getItem('personal_tokyo_v2') || '{}');
-                this.expenses = p.expenses || [];
-                this.shoppingList = p.shoppingList || [];
-                this.syncFromCloud();
-                this.fetchWeather();
-                setInterval(this.syncFromCloud, 500); // 每一段時間自動同步
-            }
+            mounted() { this.loadData(); this.fetchWeather(); }
         }).mount('#app');
     </script>
 </body>
