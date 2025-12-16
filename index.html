@@ -146,13 +146,13 @@
                 </div>
                 <div class="p-6 space-y-4">
                     <div v-if="modalType === 'schedule'" class="space-y-3">
+                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-s outline-none focus:border-blue-400">
                         <input v-model="form.time" type="time" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
-                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-xl outline-none focus:border-blue-400">
                         <input v-model="form.loc" placeholder="地點名稱" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
                         <input v-model="form.stay" placeholder="預計停留 (例如 1.5時)" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-blue-400 text-sm">
                     </div>
                     <div v-if="modalType === 'food'" class="space-y-3">
-                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-xl outline-none focus:border-blue-400">
+                        <input v-model="form.emoji" placeholder="Emoji" class="col-span-3 border-b-2 py-2 text-center text-s outline-none focus:border-blue-400">
                         <input v-model="form.name" placeholder="餐廳名稱" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-pink-400 text-sm">
                         <input v-model="form.area" placeholder="所在區域" class="w-full border-b-2 border-slate-100 py-2 outline-none focus:border-pink-400 text-sm">
                     </div>
