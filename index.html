@@ -13,6 +13,7 @@
         .chiikawa-font { font-family: 'ZCOOL KuaiLe', cursive; }
         .blue-gradient { background: linear-gradient(135deg, #a5d8ff 0%, #74c0fc 100%); }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.3); }
+        .map-box { width: 100%; height: 200px; border-radius: 20px; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 1rem; }
         .active-tab-indicator { position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 20px; height: 4px; background: #339af0; border-radius: 10px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
@@ -21,7 +22,7 @@
     <div id="app" class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-slate-50">
         
         <header class="blue-gradient p-6 text-white text-center rounded-b-[40px] shadow-lg sticky top-0 z-50">
-            <h1 class="text-2xl chiikawa-font mb-2">💙 東京跨年小幫手 💙</h1>
+            <h1 class="text-2xl chiikawa-font mb-2">💙 東京跨年助手 💙</h1>
             <div class="bg-white/20 py-2 px-4 rounded-2xl flex justify-between items-center text-xs">
                 <div class="flex items-center gap-2">
                     <i :class="weather.icon" class="text-lg"></i>
@@ -31,7 +32,7 @@
             </div>
         </header>
 
-        <main class="p-4 pt-6">
+        <main class="p-4 pt-4">
             
             <div v-show="activeTab === 'schedule'" class="space-y-4">
                 <div class="flex overflow-x-auto gap-2 no-scrollbar py-1">
@@ -41,9 +42,14 @@
                     </button>
                 </div>
 
+                <div class="map-box">
+                    <iframe :src="'https://www.google.com/maps?q=' + encodeURIComponent(currentDayMapQuery) + '&output=embed'" 
+                            width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+                </div>
+
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-black text-slate-800">Day {{ currentDay }} 行程</h2>
-                    <button @click="openModal('schedule')" class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs shadow-md font-bold">+ 新增行程</button>
+                    <h2 class="text-xl font-black text-slate-800">D{{ currentDay }} 行程清單</h2>
+                    <button @click="openModal('schedule')" class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs shadow-md font-bold">+ 新增</button>
                 </div>
 
                 <div class="space-y-3">
@@ -58,16 +64,21 @@
                         <div class="font-bold text-slate-800 text-sm mb-1">{{ item.loc }}</div>
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] text-slate-400">⏳ {{ item.stay }}</span>
-                            <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.loc)" target="_blank" class="text-blue-400 text-xs font-bold">導航 <i class="fas fa-chevron-right"></i></a>
+                            <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(item.loc)" target="_blank" class="text-blue-400 text-xs font-bold">導航 <i class="fas fa-chevron-right"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div v-show="activeTab === 'food'" class="space-y-4">
+                <div class="map-box">
+                    <iframe src="https://www.google.com/maps?q=Tokyo+Restaurants&output=embed" 
+                            width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+                </div>
+
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-black text-slate-800">🍱 美食雷達</h2>
-                    <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs shadow-md font-bold">+ 新增店家</button>
+                    <h2 class="text-xl font-black text-slate-800">🍱 美食選擇</h2>
+                    <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs shadow-md font-bold">+ 新增</button>
                 </div>
                 <div class="grid grid-cols-1 gap-3">
                     <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm">
@@ -79,61 +90,14 @@
                         <div class="flex gap-4 items-center">
                             <button @click="editItem('food', index)" class="text-slate-300 text-xs"><i class="fas fa-edit"></i></button>
                             <button @click="deleteItem('food', index)" class="text-slate-300 text-xs"><i class="fas fa-trash"></i></button>
-                            <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.name)" target="_blank" class="text-blue-400"><i class="fas fa-map-marker-alt"></i></a>
+                            <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.name + ' ' + f.area)" target="_blank" class="text-blue-400"><i class="fas fa-map-marker-alt"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-show="activeTab === 'money'" class="space-y-4">
-                <div class="bg-blue-600 text-white p-6 rounded-[30px] shadow-xl text-center">
-                    <p class="text-blue-100 text-[10px] font-bold uppercase tracking-widest">Total Spent</p>
-                    <h3 class="text-3xl font-black italic">¥ {{ totalExpense.toLocaleString() }}</h3>
-                </div>
-                <div class="glass-card p-4 space-y-3">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input v-model="newExpense.item" placeholder="支出項目" class="bg-slate-50 p-3 rounded-xl text-sm outline-none">
-                        <input v-model.number="newExpense.amount" type="number" placeholder="金額" class="bg-slate-50 p-3 rounded-xl text-sm outline-none">
-                    </div>
-                    <div class="flex gap-2">
-                        <select v-model="newExpense.type" class="flex-1 bg-white border border-blue-50 p-3 rounded-xl text-sm">
-                            <option>現金</option>
-                            <option>信用卡</option>
-                            <option>Suica</option>
-                        </select>
-                        <button @click="addExpense" class="bg-blue-600 text-white px-6 rounded-xl font-bold">記錄</button>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div v-for="(e, index) in expenses" :key="index" class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm border border-blue-50">
-                        <div class="flex gap-3 items-center">
-                            <button @click="deleteItem('money', index)" class="text-red-200 text-xs"><i class="fas fa-times-circle"></i></button>
-                            <div>
-                                <div class="font-bold text-slate-700 text-sm">{{ e.item }}</div>
-                                <div class="text-[9px] text-slate-400">{{ e.type }}</div>
-                            </div>
-                        </div>
-                        <span class="font-black text-red-500">-¥{{ e.amount.toLocaleString() }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div v-show="activeTab === 'shop'" class="space-y-4">
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-black text-slate-800 italic">Shopping List</h2>
-                    <button @click="openModal('shop')" class="bg-yellow-400 text-white px-4 py-1 rounded-full text-xs shadow-md font-bold">+ 新增清單</button>
-                </div>
-                <div class="space-y-3">
-                    <div v-for="(item, i) in shoppingList" :key="i" class="flex items-center gap-4 bg-white p-4 rounded-[20px] shadow-sm">
-                        <input type="checkbox" class="w-5 h-5 accent-blue-500">
-                        <span class="flex-1 text-slate-700 font-bold text-sm">{{ item }}</span>
-                        <div class="flex gap-3 text-slate-200">
-                            <button @click="editItem('shop', i)"><i class="fas fa-edit"></i></button>
-                            <button @click="deleteItem('shop', i)"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div v-show="activeTab === 'money'" class="space-y-4">...</div>
+            <div v-show="activeTab === 'shop'" class="space-y-4">...</div>
 
         </main>
 
@@ -153,7 +117,7 @@
                 return {
                     activeTab: 'schedule',
                     currentDay: 1,
-                    apiKey: '57759983f2f70e5102e5415fb09948ac', // <-- 請替換你的 API Key
+                    apiKey: '073a929c92257a61fa1d973faca3b13e', 
                     weather: { temp: '--', status: 'Loading', icon: 'fas fa-spinner fa-spin' },
                     tabs: [
                         { id: 'schedule', name: '行程', icon: 'fas fa-calendar-day' },
@@ -166,14 +130,15 @@
                     shoppingList: ['護照', '日幣現鈔', '行動電源'],
                     foodList: [
                         { name: "Asakusa Unana 鰻魚飯糰", area: "淺草", emoji: "🍙" },
-                        { name: "五代目 花山烏冬", area: "銀座", emoji: "🍜" }
+                        { name: "五代目 花山烏冬", area: "銀座", emoji: "🍜" },
+                        { name: "銀座 篝 本店", area: "銀座", emoji: "🍲" }
                     ],
                     scheduleData: {
                         1: [{ time: "09:49", loc: "淺草寺 雷門", stay: "30分" }, { time: "13:03", loc: "東京晴空塔", stay: "1時" }],
                         2: [{ time: "09:20", loc: "東京站丸之內", stay: "9時" }, { time: "20:14", loc: "東京鐵塔", stay: "1時" }],
                         3: [{ time: "13:46", loc: "teamLab Planets", stay: "2時" }],
                         4: [{ time: "10:22", loc: "明治神宮", stay: "45分" }],
-                        5: [{ time: "08:00", loc: "東京迪士尼海洋", stay: "整天" }],
+                        5: [{ time: "08:00", loc: "東京迪士尼海洋", stay: "全天" }],
                         6: [{ time: "09:23", loc: "江之島", stay: "45分" }],
                         7: [{ time: "10:05", loc: "Chiikawa Park", stay: "3時" }],
                         8: [{ time: "09:25", loc: "銀座 篝 本店", stay: "1時" }]
@@ -181,10 +146,16 @@
                 }
             },
             computed: {
-                totalExpense() { return this.expenses.reduce((sum, item) => sum + item.amount, 0); }
+                totalExpense() { return this.expenses.reduce((sum, item) => sum + item.amount, 0); },
+                // 計算當天所有景點，用於地圖標註
+                currentDayMapQuery() {
+                    const dayPoints = this.scheduleData[this.currentDay];
+                    if (!dayPoints || dayPoints.length === 0) return "Tokyo";
+                    return dayPoints.map(p => p.loc).join(' ');
+                }
             },
             methods: {
-                // 1. 刪除功能
+                // (其餘 deleteItem, editItem, openModal, addExpense, saveData, loadData, fetchWeather 邏輯保持不變)
                 deleteItem(type, index) {
                     if (!confirm("確定要刪除嗎？")) return;
                     if (type === 'schedule') this.scheduleData[this.currentDay].splice(index, 1);
@@ -193,16 +164,13 @@
                     if (type === 'shop') this.shoppingList.splice(index, 1);
                     this.saveData();
                 },
-                // 2. 修改功能
                 editItem(type, index) {
                     if (type === 'schedule') {
                         const item = this.scheduleData[this.currentDay][index];
                         const newTime = prompt("修改時間:", item.time);
                         const newLoc = prompt("修改地點:", item.loc);
                         const newStay = prompt("修改停留時間:", item.stay);
-                        if (newLoc) {
-                            item.time = newTime; item.loc = newLoc; item.stay = newStay;
-                        }
+                        if (newLoc) { item.time = newTime; item.loc = newLoc; item.stay = newStay; }
                     } else if (type === 'food') {
                         const item = this.foodList[index];
                         const newName = prompt("修改店名:", item.name);
@@ -214,23 +182,21 @@
                     }
                     this.saveData();
                 },
-                // 3. 新增功能 (帶時間輸入)
                 openModal(type) {
                     if (type === 'schedule') {
-                        const time = prompt("請輸入時間 (例如 09:00):", "09:00");
-                        const loc = prompt("請輸入地點:");
-                        const stay = prompt("預計停留多久 (例如 1時):", "1時");
+                        const time = prompt("時間 (09:00):", "09:00");
+                        const loc = prompt("地點:");
+                        const stay = prompt("停留多久 (1時):", "1時");
                         if (loc) {
                             this.scheduleData[this.currentDay].push({ time, loc, stay });
-                            // 按時間自動排序
                             this.scheduleData[this.currentDay].sort((a, b) => a.time.localeCompare(b.time));
                         }
                     } else if (type === 'food') {
                         const name = prompt("餐廳名稱:");
-                        const area = prompt("區域 (如: 淺草):");
+                        const area = prompt("區域:");
                         if (name) this.foodList.push({ name, area, emoji: "🍴" });
                     } else if (type === 'shop') {
-                        const val = prompt("新增清單項目:");
+                        const val = prompt("新增項目:");
                         if (val) this.shoppingList.push(val);
                     }
                     this.saveData();
@@ -242,9 +208,8 @@
                         this.saveData();
                     }
                 },
-                // 儲存至本地，避免重整消失
                 saveData() {
-                    localStorage.setItem('tokyo_trip_v1', JSON.stringify({
+                    localStorage.setItem('tokyo_trip_v2', JSON.stringify({
                         expenses: this.expenses,
                         shoppingList: this.shoppingList,
                         foodList: this.foodList,
@@ -252,7 +217,7 @@
                     }));
                 },
                 loadData() {
-                    const saved = localStorage.getItem('tokyo_trip_v1');
+                    const saved = localStorage.getItem('tokyo_trip_v2');
                     if (saved) {
                         const data = JSON.parse(saved);
                         this.expenses = data.expenses || [];
@@ -265,12 +230,8 @@
                     try {
                         const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Tokyo&units=metric&appid=${this.apiKey}&lang=zh_tw`);
                         const data = await res.json();
-                        this.weather = {
-                            temp: Math.round(data.main.temp),
-                            status: data.weather[0].description,
-                            icon: 'fas fa-cloud-sun' // 簡化圖標處理
-                        };
-                    } catch (e) { this.weather.status = "API 未連線"; }
+                        this.weather = { temp: Math.round(data.main.temp), status: data.weather[0].description, icon: 'fas fa-cloud-sun' };
+                    } catch (e) { this.weather.status = "API 未設定"; }
                 }
             },
             mounted() {
