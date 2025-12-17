@@ -57,10 +57,11 @@
                         <div class="font-bold text-slate-800 text-sm">{{ item.loc }}</div>
                         <div class="text-[10px] text-slate-400 mt-1">停留: {{ item.stay }}</div>
                     </div>
-                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.loc)" target="_blank" class="text-blue-300 hover:text-blue-600">
-                            <i class="fas fa-directions text-xl"></i>
-                    </a>
+                    
                     <div class="flex gap-4 text-slate-300">
+                        <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.loc)" target="_blank" class="text-blue-300 hover:text-blue-600">
+                            <i class="fas fa-directions text-xl"></i>
+                        </a>
                         <button @click="openModal('schedule', index)"><i class="fas fa-edit"></i></button>
                         <button @click="deleteItem('schedule', index)"><i class="fas fa-trash"></i></button>
                     </div>
@@ -81,10 +82,11 @@
                         <div class="font-bold text-slate-800 text-sm">{{ f.name }}</div>
                         <div class="text-[10px] text-pink-400 font-bold uppercase">{{ f.area }}</div>
                     </div>
-                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.name)" target="_blank" class="text-blue-400">
-                            <i class="fas fa-map-pin"></i>
-                    </a>
+                    
                     <div class="flex gap-4 text-slate-300">
+                        <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.name)" target="_blank" class="text-blue-400">
+                            <i class="fas fa-map-pin"></i>
+                        </a>
                         <button @click="openModal('food', index)"><i class="fas fa-edit"></i></button>
                         <button @click="deleteItem('food', index)"><i class="fas fa-trash"></i></button>
                     </div>
