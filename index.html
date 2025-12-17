@@ -23,7 +23,7 @@
     <div id="app" class="max-w-md mx-auto min-h-screen relative shadow-2xl bg-slate-50">
         
         <header class="blue-gradient p-6 text-white text-center rounded-b-[40px] shadow-lg sticky top-0 z-50">
-            <h1 class="text-2xl chiikawa-font mb-2">💙 東京跨年攻略 💙</h1>
+            <h1 class="text-2xl chiikawa-font mb-2">Tokyo 2025</h1>
             <div class="bg-white/20 py-2 px-4 rounded-2xl flex justify-between items-center text-xs">
                 <div class="flex items-center gap-2">
                     <i :class="weather.icon"></i>
@@ -379,7 +379,8 @@
                 saveData() {
                     localStorage.setItem('tokyo_2026_final', JSON.stringify({
                         expenses: this.expenses, shoppingList: this.shoppingList,
-                        foodList: this.foodList, scheduleData: this.scheduleData, budget: this.totalBudget
+                        foodList: this.foodList, scheduleData: this.scheduleData, 
+                        budget: this.totalBudget
                     }));
                 },
                 loadData() {
