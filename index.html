@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>東京跨年 2026 🎇 Chiikawa App</title>
+    <title>Tokyo 2025</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -49,7 +49,7 @@
                     <h2 class="text-xl font-black text-slate-800 underline decoration-blue-200 decoration-4">D{{ currentDay }} 行程表</h2>
                     <button @click="openModal('schedule')" class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(item, index) in scheduleData[currentDay]" :key="index" class="glass-card p-4 flex justify-between items-center shadow-sm border-l-4 border-blue-400">
+                <div v-for="(item, index) in scheduleData[currentDay]" :key="index" class="glass-card p-4 flex justify-between items-center gap-4 shadow-sm border-l-4 border-blue-400">
                     <div class="text-2xl">{{ item.emoji }}</div>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
@@ -77,7 +77,7 @@
                     <h2 class="text-xl font-black text-slate-800">🍱 美食清單</h2>
                     <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border border-pink-50">
+                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border-l-4 border-pink-50">
                     <div class="text-2xl">{{ f.emoji }}</div>
                     <div class="flex-1">
                         <div class="font-bold text-slate-800 text-sm">{{ f.name }}</div>
@@ -205,32 +205,30 @@
                     ],
                     newExpense: { item: '', amount: null },
                     expenses: [{ item: '飯店訂金', amount: 15000 }],
-                    shoppingList: ['Chiikawa 限量玩偶', '松本清藥妝', 'Alpen Tokyo 限定跑鞋', '晴空塔限定小八貓'],
+                    shoppingList: ['Chiikawa Land (晴空塔店, 東京站店', '寶可夢商店 (東京站店', 'ナガノマーケット (銀座店', '松本清藥妝', 'Alpen Tokyo 限定跑鞋', '晴空塔限定小八貓'],
                     foodList: [
-                        { name: "Asakusa Unana 鰻魚飯糰", area: "淺草", emoji: "🍙" },
+                        { name: "Asakusa Unana (鰻魚飯團)", area: "淺草", emoji: "🍙" },
+                        { name: "淺草炸肉餅", area: "淺草", emoji: "🍖" },
+                        { name: "豊福 和牛咖哩麵包", area: "淺草", emoji: "🍞" },
+                        { name: "Taco-Taco Asakusa Koromo (章魚燒)", area: "淺草", emoji: "🌮" },
+                        { name: "Wagyu Sukiyaki Ichinoya (和牛定食)", area: "淺草", emoji: "🍱" },
                         { name: "五代目 花山烏冬", area: "銀座", emoji: "🍜" },
                         { name: "銀座 篝 本店", area: "銀座", emoji: "🍲" }
                     ],
                     scheduleData: {
                         1: [
                             { time: "06:30", loc: "成田國際機場2號候機樓", stay: "01時15分", emoji: "🛬" },
-                            { time: "09:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "00時30分" },
-                            { time: "09:49", loc: "淺草寺 雷門", stay: "00時30分" },
-                            { time: "10:25", loc: "淺草寺", stay: "00時45分" },
-                            { time: "11:14", loc: "Asakusa Unana", stay: "00時15分" },
-                            { time: "11:35", loc: "淺草炸肉餅", stay: "00時15分" },
-                            { time: "11:51", loc: "豊福 和牛咖哩麵包", stay: "00時15分" },
-                            { time: "12:09", loc: "Taco-Taco Asakusa Koromo", stay: "00時15分" },
-                            { time: "12:25", loc: "Wagyu Sukiyaki Ichinoya", stay: "00時15分" },
-                            { time: "13:03", loc: "東京晴空塔", stay: "01時00分" },
-                            { time: "14:07", loc: "Chiikawa Land 晴空塔店", stay: "00時30分" },
-                            { time: "15:03", loc: "東京站丸之內北口", stay: "00時20分" },
-                            { time: "15:30", loc: "寶可夢商店 東京站店", stay: "00時20分" },
-                            { time: "15:51", loc: "Chiikawa Land TOKYO Station", stay: "00時20分" },
-                            { time: "16:26", loc: "ナガノマーケット GINZA", stay: "00時20分" },
-                            { time: "16:57", loc: "GINZA SIX", stay: "01時00分" },
-                            { time: "18:07", loc: "五代目 花山烏冬 銀座店", stay: "01時00分" },
-                            { time: "19:28", loc: "東橫INN 秋葉淺草橋站東口", stay: "01時00分" }
+                            { time: "09:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "00時30分", emoji: "🛏️" },
+                            { time: "09:45", loc: "淺草寺 雷門", stay: "00時15分", emoji: "🏮" },
+                            { time: "10:00", loc: "淺草寺", stay: "1時15分", emoji: "⛩️" },
+                            { time: "11:15", loc: "午膳時間", stay: "1時15分", emoji: "🍴" },
+                            { time: "13:00", loc: "東京晴空塔", stay: "01時15分", emoji: "🗼" },
+                            { time: "14:15", loc: "東京晴空街道", stay: "0時30分", emoji: "🛍️" },
+                            { time: "15:00", loc: "東京站丸之內北口", stay: "00時20分", emoji: "🚍" },
+                            { time: "15:30", loc: "東京駅一番街", stay: "0時45分", emoji: "🛍️" },
+                            { time: "16:30", loc: "銀座", stay: "1時30分", emoji: "🛍️" },
+                            { time: "18:15", loc: "晚餐時間", stay: "01時30分", emoji: "🍴" },
+                            { time: "20:15", loc: "東橫INN 秋葉淺草橋站東口", stay: "01時00分", emoji: "🛏️" }
                         ],
                         2: [
                             { time: "08:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "01時00分" },
