@@ -77,7 +77,7 @@
                     <h2 class="text-xl font-black text-slate-800">🍱 美食清單</h2>
                     <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border-l-4 border-pink-50">
+                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border border-pink-50">
                     <div class="text-2xl">{{ f.emoji }}</div>
                     <div class="flex-1">
                         <div class="font-bold text-slate-800 text-sm">{{ f.name }}</div>
@@ -256,7 +256,7 @@
                             { time: "20:05", loc: "Summit 超市御徒町", stay: "01時00分" },
                             { time: "21:11", loc: "唐吉訶德 御徒町店", stay: "00時30分" },
                             { time: "21:56", loc: "東橫INN淺草藏前2號店", stay: "01時00分" }
-                        ],
+                         ],
                          4: [
                             { time: "06:00", loc: "東橫INN淺草藏前2號店", stay: "00時45分", emoji: "🛏️" },
                             { time: "07:15", loc: "東京站丸之內北口", stay: "00時15分", emoji: "🚍" },
