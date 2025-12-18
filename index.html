@@ -213,7 +213,7 @@
                     ],
                     scheduleData: {
                         1: [
-                            { time: "06:30", loc: "成田國際機場2號候機樓", stay: "01時15分" },
+                            { time: "06:30", loc: "成田國際機場2號候機樓", stay: "01時15分", emoji: "🛬" },
                             { time: "09:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "00時30分" },
                             { time: "09:49", loc: "淺草寺 雷門", stay: "00時30分" },
                             { time: "10:25", loc: "淺草寺", stay: "00時45分" },
@@ -335,7 +335,7 @@
                         this.form = { ...(type === 'schedule' ? this.scheduleData[this.currentDay][index] : this.foodList[index]) };
                     } else {
                         this.isEditing = false;
-                        this.form = { emoji: '', time: '09:00', loc: '', stay: '1時', name: '', area: '' };
+                        this.form = { emoji: '', time: '', loc: '', stay: '', name: '', area: '' };
                     }
                 },
                 saveModal() {
