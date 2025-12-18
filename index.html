@@ -204,7 +204,7 @@
                         { id: 'shop', name: '購物', icon: 'fas fa-shopping-bag' }
                     ],
                     newExpense: { item: '', amount: null },
-                    expenses: [{ item: '飯店訂金', amount: 15000 }],
+                    expenses: [{ item: '', amount: null }],
                     shoppingList: ['Chiikawa Land (晴空塔店, 東京站店', '寶可夢商店 (東京站店', 'ナガノマーケット (銀座店', '松本清藥妝', 'Alpen Tokyo 限定跑鞋', '晴空塔限定小八貓'],
                     foodList: [
                         { name: "Asakusa Unana (鰻魚飯團)", area: "淺草", emoji: "🍙" },
@@ -221,13 +221,13 @@
                             { time: "09:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "00時30分", emoji: "🛏️" },
                             { time: "09:45", loc: "淺草寺 雷門", stay: "00時15分", emoji: "🏮" },
                             { time: "10:00", loc: "淺草寺", stay: "1時15分", emoji: "⛩️" },
-                            { time: "11:15", loc: "午膳時間", stay: "1時15分", emoji: "🍴" },
+                            { time: "11:15", loc: "午膳時間", stay: "1時15分", emoji: "🍽️" },
                             { time: "13:00", loc: "東京晴空塔", stay: "01時15分", emoji: "🗼" },
                             { time: "14:15", loc: "東京晴空街道", stay: "0時30分", emoji: "🛍️" },
                             { time: "15:00", loc: "東京站丸之內北口", stay: "00時20分", emoji: "🚍" },
                             { time: "15:30", loc: "東京駅一番街", stay: "0時45分", emoji: "🛍️" },
                             { time: "16:30", loc: "銀座", stay: "1時30分", emoji: "🛍️" },
-                            { time: "18:15", loc: "晚餐時間", stay: "01時30分", emoji: "🍴" },
+                            { time: "18:15", loc: "晚餐時間", stay: "01時30分", emoji: "🍽️" },
                             { time: "20:15", loc: "東橫INN 秋葉淺草橋站東口", stay: "01時00分", emoji: "🛏️" }
                         ],
                         2: [
@@ -390,7 +390,7 @@
                         this.shoppingList = d.shoppingList || [];
                         this.foodList = d.foodList || [];
                         this.scheduleData = d.scheduleData || this.scheduleData;
-                        this.totalBudget = d.budget || 150000;
+                        this.totalBudget = d.budget || 100000;
                     }
                 }
             },
