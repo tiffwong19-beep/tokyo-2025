@@ -73,8 +73,13 @@
                 <div class="map-box">
                     <iframe src="https://www.google.com/maps?q=Tokyo+Restaurants&output=embed" width="100%" height="100%" frameborder="0"></iframe>
                 </div>
+                
                 <div class="flex justify-between items-center">
                     <h2 class="text-xl font-black text-slate-800">🍱 美食清單</h2>
+                    <select v-model="selectedArea" class="border border-slate-200 rounded-xl text-sm py-1 px-2 text-slate-600">
+                        <option value="">全部地區</option>
+                        <option v-for="area in uniqueAreas" :key="area" :value="area">{{ area }}</option>
+                    </select>
                     <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
                 <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border-l-4 border-pink-50">
@@ -196,7 +201,8 @@
                     form: { time: '', loc: '', stay: '', name: '', area: '' },
                     apiKey: '073a929c92257a61fa1d973faca3b13e',
                     weather: { temp: '--', status: '更新中', icon: 'fas fa-spinner fa-spin' },
-                    totalBudget: 150000,
+                    selectedArea: '',
+                    totalBudget: 100000,
                     tabs: [
                         { id: 'schedule', name: '行程', icon: 'fas fa-map-marked-alt' },
                         { id: 'food', name: '美食', icon: 'fas fa-utensils' },
@@ -316,6 +322,14 @@
                 }
             },
             computed: {
+                uniqueAreas() {
+                    const areas = this.foodList.map(f => f.area);
+                    return [...new Set(areas)];
+                },
+                filteredFoodList() {
+                    if (!this.selectedArea) return this.foodList;
+                    return this.foodList.filter(f => f.area === this.selectedArea);
+                },
                 totalExpense() { return this.expenses.reduce((sum, item) => sum + item.amount, 0); },
                 budgetPercent() { 
                     let p = Math.round((this.totalExpense / this.totalBudget) * 100);
