@@ -323,8 +323,8 @@
             },
             computed: {
                 uniqueAreas() {
-                    const areas = this.foodList.map(f => f.area);
-                    return [...new Set(areas)];
+                    const areas = this.foodList.map(f => f.area || '');
+                    return [...new Set(areas.filter(a => a))];
                 },
                 filteredFoodList() {
                     if (!this.selectedArea) return this.foodList;
