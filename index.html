@@ -77,7 +77,7 @@
                     <h2 class="text-xl font-black text-slate-800">🍱 美食清單</h2>
                     <button @click="openModal('food')" class="bg-pink-400 text-white px-4 py-1 rounded-full text-xs font-bold">+ 新增</button>
                 </div>
-                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border border-pink-50">
+                <div v-for="(f, index) in foodList" :key="index" class="glass-card p-4 flex items-center gap-4 shadow-sm border-l-4 border-pink-50">
                     <div class="text-2xl">{{ f.emoji }}</div>
                     <div class="flex-1">
                         <div class="font-bold text-slate-800 text-sm">{{ f.name }}</div>
@@ -196,7 +196,7 @@
                     form: { time: '', loc: '', stay: '', name: '', area: '' },
                     apiKey: 'YOUR_API_KEY', // <-- 請替換
                     weather: { temp: '--', status: '更新中', icon: 'fas fa-spinner fa-spin' },
-                    totalBudget: 100000,
+                    totalBudget: 150000,
                     tabs: [
                         { id: 'schedule', name: '行程', icon: 'fas fa-map-marked-alt' },
                         { id: 'food', name: '美食', icon: 'fas fa-utensils' },
@@ -221,7 +221,7 @@
                             { time: "09:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "00時30分", emoji: "🛏️" },
                             { time: "09:45", loc: "淺草寺 雷門", stay: "00時15分", emoji: "🏮" },
                             { time: "10:00", loc: "淺草寺", stay: "1時15分", emoji: "⛩️" },
-                            { time: "11:15", loc: "午餐時間", stay: "1時15分", emoji: "🍽️" },
+                            { time: "11:15", loc: "午膳時間", stay: "1時15分", emoji: "🍽️" },
                             { time: "13:00", loc: "東京晴空塔", stay: "01時15分", emoji: "🗼" },
                             { time: "14:15", loc: "東京晴空街道", stay: "0時30分", emoji: "🛍️" },
                             { time: "15:00", loc: "東京站丸之內北口", stay: "00時20分", emoji: "🚍" },
@@ -256,8 +256,8 @@
                             { time: "20:05", loc: "Summit 超市御徒町", stay: "01時00分" },
                             { time: "21:11", loc: "唐吉訶德 御徒町店", stay: "00時30分" },
                             { time: "21:56", loc: "東橫INN淺草藏前2號店", stay: "01時00分" }
-                         ],
-                         4: [
+                        ],
+                        4: [
                             { time: "06:00", loc: "東橫INN淺草藏前2號店", stay: "00時45分", emoji: "🛏️" },
                             { time: "07:15", loc: "東京站丸之內北口", stay: "00時15分", emoji: "🚍" },
                             { time: "07:30", loc: "富士山一日遊", stay: "11時00分", emoji: "🗻" },
@@ -301,7 +301,7 @@
                             { time: "19:57", loc: "東急FoodShow 澀谷店", stay: "01時00分" },
                             { time: "09:20", loc: "", stay: "09時10分" },
                             { time: "18:50", loc: "Negishi 牛舌", stay: "01時00分" },
-                            { time: "20:14", loc: "東京鐵塔", stay: "01時00分" },
+                            { time: "20:14", loc: "東京鐵塔", stay: "01時00分" }
                         ],
                         8: [
                             { time: "08:00", loc: "東橫INN 秋葉淺草橋站東口", stay: "01時00分" },
